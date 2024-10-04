@@ -1,4 +1,7 @@
-"""Main module for the AI Model Management App."""
+"""
+Main FastAPI application entry point, including database initialization
+and route inclusion for the application.
+"""
 
 from fastapi import FastAPI
 
