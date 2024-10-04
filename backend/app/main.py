@@ -5,7 +5,17 @@ and route inclusion for the application.
 
 from fastapi import FastAPI
 
+from backend.app.api import users
+from backend.app.core.database import engine, Base
+
+
+# Create all tables in database
+Base.metadata.create_all(bind=engine)
+
 app = FastAPI()
+
+# Include the user router
+app.include_router(users.router, prefix='api/users')
 
 
 # Home route to welcome users to the app
