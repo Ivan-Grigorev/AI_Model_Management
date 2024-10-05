@@ -1,0 +1,34 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: ./ai_model_management/backend
+      dockerfile: Dockerfile
+    container_name: backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./ai_model_management/backend:/app
+      - backend_data:/app/db
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./ai_model_management/frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./ai_model_management/frontend:/app
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  backend_data:  # Volume for SQLite database persistence
