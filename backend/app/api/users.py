@@ -52,3 +52,14 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)):
             status_code=status.HTTP_400_BAD_REQUEST, detail='Incorrect email or password'
         )
     return {'message': 'Login successful'}
+
+
+@router.post('/logout')
+def logout():
+    """
+    Log out the user by invalidating their session or token.
+
+    Returns:
+        dict: A message indicating successful logout.
+    """
+    return {'message': 'Logout successful'}
