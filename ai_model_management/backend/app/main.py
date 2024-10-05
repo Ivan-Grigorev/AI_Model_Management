@@ -4,6 +4,7 @@ and route inclusion for the application.
 """
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from .api import users
 from .core.database import engine, Base
@@ -14,8 +15,17 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
+# Allow frontend to communicate with the backend (CORS settings).
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=['*'],
+    allow_credentials=True,
+    allow_methods=['*'],
+    allow_headers=['*'],
+)
+
 # Include the user router
-app.include_router(users.router, prefix='/api/users')
+app.include_router(users.router)
 
 
 # Home route to welcome users to the app
