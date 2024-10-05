@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from backend.app.models.user_model import User
 from backend.app.schemas.user_schemas import UserCreate
 
-# Initialize password hashin context
+# Initialize password hashing context
 pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 
 
