@@ -16,7 +16,7 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
     """
     User registration endpoint.
 
-    Args:
+    Attributes:
         user (UserCreate): User data for registration.
         db (Session): SQLAlchemy database session.
 
@@ -39,7 +39,7 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)):
     """
     User login end point.
 
-    Args:
+    Attributes:
         user (UserLogin): User credential for login.
         db (Session): SQLAlchemy database session.
 
