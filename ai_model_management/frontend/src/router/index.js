@@ -3,27 +3,51 @@ import AboutView from '../views/AboutView.vue';
 import HomeView from '../views/HomeView.vue';
 import SignUpView from '../views/SignUpView.vue';
 import LoginView from '../views/LoginView.vue';
+import DatasetView from '../views/DatasetView.vue';
+import DatasetDetailsView from '../views/DatasetDetailsView.vue';
+import ModelView from '../views/ModelView.vue';
+import ModelDetailsView from '../views/ModelDetailsView.vue'
 
 const routes = [
   {
-    path: '/about',  // About route
+    path: '/about',
     name: 'about',
-    component: AboutView  // Using AboutView component
+    component: AboutView
   },
   {
     path: '/',
     name: 'home',
-    component: HomeView // Using HomeView component
+    component: HomeView
   },
   {
-    path: '/signin', // Sign up route
+    path: '/signin',
     name: 'signup',
-    component: SignUpView // Using SignUpView component
+    component: SignUpView
   },
   {
-    path: '/login', // Login route
+    path: '/login',
     name: 'login',
-    component: LoginView // Using LoginView component
+    component: LoginView
+  },
+  {
+    path: '/datasets',
+    name: 'datasets',
+    component: DatasetView
+  },
+  {
+    path: '/datasets/:dataset_id',
+    name: 'dataset-details',
+    component: DatasetDetailsView
+  },
+  {
+    path: '/models',
+    name: 'models',
+    component: ModelView
+  },
+  {
+    path: '/models/:model_id',
+    name: 'models-details',
+    component: ModelDetailsView
   }
 ];
 
