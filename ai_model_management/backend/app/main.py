@@ -6,7 +6,7 @@ and route inclusion for the application.
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from .api import users
+from .api import users, datasets, models
 from .core.database import engine, Base
 
 
@@ -18,14 +18,16 @@ app = FastAPI()
 # Allow frontend to communicate with the backend (CORS settings).
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=['*'],
+    allow_origins=['http://localhost:8080'],
     allow_credentials=True,
     allow_methods=['*'],
     allow_headers=['*'],
 )
 
-# Include the user router
+# Include routers for users, datasets, and models
 app.include_router(users.router)
+app.include_router(datasets.router)
+app.include_router(models.router)
 
 
 # Home route to welcome users to the app
