@@ -122,8 +122,8 @@
             <td class="px-4 py-2">{{ training.experiment_name }}</td>
             <td class="px-4 py-2">{{ training.model_id }}</td>
             <td class="px-4 py-2">{{ training.dataset_id }}</td>
-            <td class="px-4 py-2">{{ training.precision }}</td>
-            <td class="px-4 py-2">{{ training.recall }}</td>
+            <td class="px-4 py-2">{{ (training.precision * 100).toFixed(2) }}%</td>
+            <td class="px-4 py-2">{{ (training.recall * 100).toFixed(2) }}%</td>
           </tr>
         </tbody>
       </table>

@@ -7,8 +7,8 @@
       <p><strong>Experiment Name:</strong> {{ training.experiment_name }}</p>
       <p><strong>Model:</strong> {{ training.model_name }} (ID: {{ training.model_id }})</p>
       <p><strong>Dataset:</strong> {{ training.dataset_name }} (ID: {{ training.dataset_id }})</p>
-      <p><strong>Precision:</strong> {{ training.precision }}</p>
-      <p><strong>Recall:</strong> {{ training.recall }}</p>
+      <p><strong>Precision:</strong> {{ (training.precision * 100).toFixed(2) }}%</p>
+      <p><strong>Recall:</strong> {{ (training.recall * 100).toFixed(2) }}%</p>
     </div>
 
     <button @click="$router.push('/trainings')" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700">

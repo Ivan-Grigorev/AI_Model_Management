@@ -48,8 +48,8 @@ def create_training(training: TrainingCreate):
         model_name=model.name,
         dataset_id=training.dataset_id,
         dataset_name=dataset.name,
-        precision=round(random.uniform(0, 1), 5),  # random precision value between 0 and 1
-        recall=round(random.uniform(0, 1), 5),  # random recall value between 0 and 1
+        precision=random.uniform(0, 1),  # random precision value between 0 and 1
+        recall=random.uniform(0, 1),  # random recall value between 0 and 1
     )
     db.add(new_training)
     db.commit()
