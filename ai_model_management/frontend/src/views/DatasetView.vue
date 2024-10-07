@@ -1,5 +1,8 @@
 <template>
   <div class="container mx-auto p-4">
+    <!-- Page Header -->
+    <h1 class="text-2xl font-semibold mb-4">AI Datasets Dashboard</h1>
+
     <!-- Add Dataset Form -->
     <div class="bg-white shadow-md rounded-lg p-6 mb-6">
       <h2 class="text-2xl font-semibold mb-4">Add New Dataset</h2>
@@ -71,7 +74,11 @@
         </thead>
         <tbody>
           <tr v-for="dataset in datasets" :key="dataset.id" class="border-b">
-            <td class="px-4 py-2">{{ dataset.id }}</td>
+            <td class="px-4 py-2">
+              <a :href="`/datasets/${dataset.id}`" class="text-blue-500 underline hover:text-blue-700">
+                {{ dataset.id }}
+              </a>
+            </td>
             <td class="px-4 py-2">{{ dataset.name }}</td>
           </tr>
         </tbody>
