@@ -1,47 +1,15 @@
-"""Models API for creating, listing, and fetching specific models."""
+"""API routes for creating, listing, and fetching specific models."""
 
 from typing import List
 
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from ..core.database import SessionLocal
 from ..models.other_models import Model
+from ..schemas.model_schemas import ModelCreate, ModelResponse
 
 router = APIRouter()
-
-
-class ModelCreate(BaseModel):
-    """
-    Pydantic model for model creation.
-
-    Attributes:
-        name (str): The name of the model to be created.
-    """
-
-    name: str
-
-
-class ModelResponse(BaseModel):
-    """
-    Response model for models.
-
-    Attributes:
-        id (int): The unique identifier from the model.
-        name (str): The name of the model.
-    """
-
-    id: int
-    name: str
-
-    class Config:
-        """
-        Allow the model to initialize from attributes
-        instead of just keywords arguments.
-        """
-
-        from_attributes = True
 
 
 # Route to create a model
@@ -66,10 +34,10 @@ def create_model(model: ModelCreate):
 
 
 # Route to list all models
-@router.get('/models', response_model=List[ModelCreate])
+@router.get('/models', response_model=List[ModelResponse])
 def list_models():
     """
-    GET all models.
+    Get all models.
 
     Returns:
         List of all models in the database.
