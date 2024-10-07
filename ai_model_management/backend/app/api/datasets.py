@@ -1,47 +1,15 @@
-"""Datasets for creating, listing, and fetching specific datasets."""
+"""API routes for creating, listing, and fetching specific datasets."""
 
 from typing import List
 
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from ..core.database import SessionLocal
 from ..models.other_models import Dataset
+from ..schemas.dataset_schemas import DatasetCreate, DatasetResponse
 
 router = APIRouter()
-
-
-class DatasetCreate(BaseModel):
-    """
-    Pydantic model for dataset creation.
-
-    Attributes:
-        name (str): The name of the dataset to be created.
-    """
-
-    name: str
-
-
-class DatasetResponse(BaseModel):
-    """
-    Response model for datasets.
-
-    Attributes:
-        id: (int): The unique identifier from the dataset.
-        name (str): The name of the dataset.
-    """
-
-    id: int
-    name: str
-
-    class Config:
-        """
-        Allow the model to initialize from attributes
-        instead of just keywords arguments.
-        """
-
-        from_attributes = True
 
 
 # Route to create a dataset
