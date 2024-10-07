@@ -6,9 +6,8 @@ and route inclusion for the application.
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from .api import users, datasets, models
-from .core.database import engine, Base
-
+from .api import datasets, models, trainings, users
+from .core.database import Base, engine
 
 # Create all tables in database
 Base.metadata.create_all(bind=engine)
@@ -24,19 +23,20 @@ app.add_middleware(
     allow_headers=['*'],
 )
 
-# Include routers for users, datasets, and models
+# Include routers for users, datasets, models, and trainings
 app.include_router(users.router)
 app.include_router(datasets.router)
 app.include_router(models.router)
+app.include_router(trainings.router)
 
 
 # Home route to welcome users to the app
 @app.get('/home')
 def read_home():
     """
-    GET /home
+    The main entry point for the frontend to fetch the home page content.
 
-    - Return a welcome message to the user.
-    - The main entry point for the frontend to fetch the home page content.
+    Returns:
+         A welcome message to the user.
     """
     return {'message': 'Welcome to the AI Model Management App!'}
