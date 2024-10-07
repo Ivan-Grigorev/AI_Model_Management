@@ -6,7 +6,9 @@ import LoginView from '../views/LoginView.vue';
 import DatasetView from '../views/DatasetView.vue';
 import DatasetDetailsView from '../views/DatasetDetailsView.vue';
 import ModelView from '../views/ModelView.vue';
-import ModelDetailsView from '../views/ModelDetailsView.vue'
+import ModelDetailsView from '../views/ModelDetailsView.vue';
+import TrainingView from '../views/TrainingView.vue';
+import TrainingDetailsView from '../views/TrainingDetailsView.vue';
 
 const routes = [
   {
@@ -48,6 +50,16 @@ const routes = [
     path: '/models/:model_id',
     name: 'models-details',
     component: ModelDetailsView
+  },
+  {
+    path: '/trainings',
+    name: 'trainings',
+    component: TrainingView
+  },
+  {
+    path: '/trainings/:training_id',
+    name: 'training-details',
+    component: TrainingDetailsView
   }
 ];
 
