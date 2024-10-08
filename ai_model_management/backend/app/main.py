@@ -7,7 +7,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .api import admin, datasets, models, trainings, users
-from .core.database import Base, engine
+from .database.config import Base, engine
 
 # Create all tables in database
 Base.metadata.create_all(bind=engine)
