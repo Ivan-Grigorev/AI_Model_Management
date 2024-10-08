@@ -6,7 +6,7 @@ and route inclusion for the application.
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from .api import datasets, models, trainings, users
+from .api import admin, datasets, models, trainings, users
 from .core.database import Base, engine
 
 # Create all tables in database
@@ -23,7 +23,8 @@ app.add_middleware(
     allow_headers=['*'],
 )
 
-# Include routers for users, datasets, models, and trainings
+# Include routers
+app.include_router(admin.router, prefix='/admin')
 app.include_router(users.router)
 app.include_router(datasets.router)
 app.include_router(models.router)
