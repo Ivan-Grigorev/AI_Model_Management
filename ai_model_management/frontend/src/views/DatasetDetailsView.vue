@@ -5,6 +5,7 @@
     <div class="border p-4 rounded-lg bg-gray-100">
       <p><strong>ID:</strong> {{ dataset.id }}</p>
       <p><strong>Name:</strong> {{ dataset.name }}</p>
+      <p><strong>Creation Date:</strong> {{ dataset.creation_date }}</p>
     </div>
 
     <button @click="$router.push('/datasets')" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700">
