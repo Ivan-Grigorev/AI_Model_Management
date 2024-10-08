@@ -1,0 +1,70 @@
+<template>
+  <!-- Header -->
+  <header class="bg-blue-600 text-white p-4 flex justify-between items-center">
+    <router-link to="/admin" class="text-2xl hover:underline">Admin Panel</router-link>
+    <h2 class="text-xl font-bold">Models Management</h2>
+  </header>
+  <div class="container mx-auto py-6 px-4">
+    <h1 class="text-2xl font-bold mb-4">Model Details</h1>
+
+    <div class="border p-4 rounded-lg bg-gray-100">
+      <p><strong>ID:</strong> {{ model.id }}</p>
+      <p><strong>Name:</strong> {{ model.name }}</p>
+      <p><strong>Creation Date:</strong> {{ model.creation_date }}</p>
+    </div>
+
+    <div class="flex flex-col space-y-4 mt-4 items-center">
+      <button
+        @click="$router.push('/admin/models')"
+        class="w-48 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700">
+        Back to All Models
+      </button>
+      <button
+        @click="deleteModel(model.id)"
+        class="w-48 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-700">
+        Delete
+      </button>
+    </div>
+  </div>
+</template>
+
+<script>
+import axios from 'axios';
+
+export default {
+  data() {
+    return {
+      model: null,
+    };
+  },
+  methods: {
+    fetchModel() {
+      const modelId = this.$route.params.model_id;
+      axios.get(`/admin/models/${modelId}`)
+        .then(response => {
+          this.model = response.data;
+        })
+        .catch(error => {
+          console.error('Model not found', error);
+        });
+    },
+    async deleteModel(modelId) {
+      if (confirm('Are you sure you want to delete this model?')) {
+        try {
+          await axios.delete(`/admin/models/${modelId}`);
+          this.$router.push('/admin/models'); // Redirect to the models page
+        } catch (error) {
+          console.error('Error deleting model:', error);
+        }
+      }
+    },
+  },
+  created() {
+    this.fetchModel();
+  }
+};
+</script>
+
+<style scoped>
+/* Additional custom styles if needed */
+</style>
