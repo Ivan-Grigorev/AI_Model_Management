@@ -9,15 +9,15 @@
       <form @submit.prevent="addTraining">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
           <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="experimentName">
-              Experiment Name
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="trainingName">
+              Training Name
             </label>
             <input
-              v-model="newTraining.experiment_name"
-              id="experimentName"
+              v-model="newTraining.training_name"
+              id="trainingName"
               type="text"
               class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              placeholder="Enter experiment name"
+              placeholder="Enter training name"
               required
             />
           </div>
@@ -68,14 +68,14 @@
       <form @submit.prevent="searchTraining">
         <div class="mb-4">
           <label class="block text-gray-700 text-sm font-bold mb-2" for="searchQuery">
-            Search by ID or Experiment Name
+            Search by ID or Training Name
           </label>
           <input
             v-model="searchQuery"
             id="searchQuery"
             type="text"
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            placeholder="Enter training ID or experiment name"
+            placeholder="Enter training ID or training name"
             required
           />
         </div>
@@ -105,7 +105,7 @@
         <thead>
           <tr class="bg-gray-200">
             <th class="px-4 py-2">Training ID</th>
-            <th class="px-4 py-2">Experiment Name</th>
+            <th class="px-4 py-2">Training Name</th>
             <th class="px-4 py-2">Model ID</th>
             <th class="px-4 py-2">Dataset ID</th>
             <th class="px-4 py-2">Precision</th>
@@ -119,7 +119,7 @@
                 {{ training.id }}
               </a>
             </td>
-            <td class="px-4 py-2">{{ training.experiment_name }}</td>
+            <td class="px-4 py-2">{{ training.training_name }}</td>
             <td class="px-4 py-2">{{ training.model_id }}</td>
             <td class="px-4 py-2">{{ training.dataset_id }}</td>
             <td class="px-4 py-2">{{ (training.precision * 100).toFixed(2) }}%</td>
@@ -142,7 +142,7 @@ export default {
       searchError: false,  // To handle search errors
       foundTrainingId: null,  // To store found training ID
       newTraining: {  // For the add training form
-        experiment_name: '',
+        training_name: '',
         model_id: '',
         dataset_id: '',
       },
@@ -168,7 +168,7 @@ export default {
         this.trainings.push(response.data);
 
         // Reset the form after successful submission
-        this.newTraining.experiment_name = '';
+        this.newTraining.training_name = '';
         this.newTraining.model_id = '';
         this.newTraining.dataset_id = '';
       } catch (error) {
@@ -181,7 +181,7 @@ export default {
       }
     },
     async searchTraining() {
-      // Search for a training by ID or experiment name
+      // Search for a training by ID or training name
       const query = this.searchQuery.trim();
       this.searchError = false;
       this.foundTrainingId = null; // Reset the found training ID
@@ -194,9 +194,9 @@ export default {
             await axios.get(`/trainings/${trainingId}`);
             this.foundTrainingId = trainingId;
           } else {
-            // If not a valid ID, search by experiment name
+            // If not a valid ID, search by training name
             const response = await axios.get(`/trainings`);
-            const training = response.data.find(t => t.experiment_name.toLowerCase() === query.toLowerCase());
+            const training = response.data.find(t => t.training_name.toLowerCase() === query.toLowerCase());
             if (training) {
               this.foundTrainingId = training.id;
             } else {
