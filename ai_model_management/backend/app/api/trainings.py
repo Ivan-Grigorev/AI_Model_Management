@@ -2,11 +2,12 @@
 
 import random
 from typing import List
+from datetime import datetime
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from ..core.database import SessionLocal
+from ..core.database import get_db
 from ..models.other_models import Dataset, Model, Training
 from ..schemas.training_schemas import TrainingCreate, TrainingResponse
 
@@ -15,7 +16,7 @@ router = APIRouter()
 
 # Route to create a training
 @router.post('/trainings', response_model=TrainingResponse)
-def create_training(training: TrainingCreate):
+def create_training(training: TrainingCreate, db: Session = Depends(get_db)):
     """
     Create a new training.
 
@@ -25,8 +26,6 @@ def create_training(training: TrainingCreate):
     Returns:
         The created training.
     """
-
-    db: Session = SessionLocal()
 
     # Check if the model exists
     model = db.query(Model).filter(Model.id == training.model_id).first()
@@ -43,13 +42,14 @@ def create_training(training: TrainingCreate):
         )
 
     new_training = Training(
-        experiment_name=training.experiment_name,
+        training_name=training.training_name,
         model_id=training.model_id,
         model_name=model.name,
         dataset_id=training.dataset_id,
         dataset_name=dataset.name,
         precision=random.uniform(0, 1),  # random precision value between 0 and 1
         recall=random.uniform(0, 1),  # random recall value between 0 and 1
+        creation_date=datetime.now().strftime('%Y/%m/%d %H:%M:%S')
     )
     db.add(new_training)
     db.commit()
@@ -59,21 +59,21 @@ def create_training(training: TrainingCreate):
 
 # Route to list all trainings
 @router.get('/trainings', response_model=List[TrainingResponse])
-def list_trainings():
+def list_trainings(db: Session = Depends(get_db)):
     """
     Get all trainings.
 
     Returns:
         List of all trainings in the database.
     """
-    db: Session = SessionLocal()
+
     trainings = db.query(Training).all()
     return trainings
 
 
 # Route to get a specific training by ID
 @router.get('/trainings/{training_id}', response_model=TrainingResponse)
-def get_training(training_id: int):
+def get_training(training_id: int, db: Session = Depends(get_db)):
     """
     Retrieve a specific training by ID.
 
@@ -87,7 +87,6 @@ def get_training(training_id: int):
         HTTP 404 if not found.
     """
 
-    db: Session = SessionLocal()
     training = db.query(Training).filter(Training.id == training_id).first()
     if not training:
         raise HTTPException(status_code=404, detail='Training not found')
