@@ -21,10 +21,12 @@ class DatasetResponse(BaseModel):
     Attributes:
         id (int): The unique identifier for the dataset.
         name (str): The name of the dataset.
+        creation_date (str): The date of dataset creation.
     """
 
     id: int
     name: str
+    creation_date: str
 
     class Config:
         """
