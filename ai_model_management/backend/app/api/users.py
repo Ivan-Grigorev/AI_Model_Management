@@ -2,13 +2,17 @@
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
+from passlib.context import CryptContext
+from datetime import datetime
 
 from ..core.database import get_db
 from ..models.user_model import User
 from ..schemas.user_schemas import UserCreate, UserInDB, UserLogin
-from ..services.user_services import create_user, verify_password
 
 router = APIRouter()
+
+# Initialize password hashing context
+pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 
 
 @router.post('/signin', response_model=UserInDB, status_code=status.HTTP_201_CREATED)
@@ -31,7 +35,18 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail='Email already registered'
         )
-    return create_user(db=db, user=user)
+
+    hashed_password = pwd_context.hash(user.password)
+    # is_admin = user.email == 'admin@ai-model-app.co.jp' and user.password == 'YmUy0DUyMj'
+    db_user = User(
+        email=user.email,
+        hashed_password=hashed_password,
+        registration_date=datetime.now().date().strftime('%Y/%m/%d')
+    )  # , is_admin=is_admin)
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
 
 
 @router.post('/login')
@@ -47,7 +62,7 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)):
         HTTPException: If the user is not found or password is incorrect.
     """
     db_user = db.query(User).filter(User.email == user.email).first()
-    if not db_user or not verify_password(user.password, db_user.hashed_password):
+    if not db_user or not pwd_context.verify(user.password, db_user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail='Incorrect email or password'
         )
