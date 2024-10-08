@@ -8,12 +8,12 @@ class TrainingCreate(BaseModel):
     Pydantic schema for creating a new training record.
 
     Attributes:
-         experiment_name (str): The name of experiment to be created.
+         training_name (str): The name of training to be created.
          model_id (int): The ID of the model used in the training.
          dataset_id (int): The ID of the dataset used in the training.
     """
 
-    experiment_name: str
+    training_name: str
     model_id: int
     dataset_id: int
 
@@ -24,23 +24,25 @@ class TrainingResponse(BaseModel):
 
     Attributes:
          id (int): The unique identifier for the training.
-         experiment_name (str): The name of experiment to be created.
+         training_name (str): The name of training to be created.
          model_id (int): The ID of the model used in the training.
          model_name (str): The name of the model used in the training.
          dataset_id (int): The ID of the dataset used in the training.
          dataset_name (str): The name of the dataset used in the training.
          precision (float): The precision value for the training results.
          recall (float): The recall value for the training results.
+         creation_date (str): The date of training creation.
     """
 
     id: int
-    experiment_name: str
+    training_name: str
     model_id: int
     model_name: str
     dataset_id: int
     dataset_name: str
     precision: float
     recall: float
+    creation_date: str
 
     class Config:
         """
