@@ -21,10 +21,12 @@ class ModelResponse(BaseModel):
     Attributes:
         id (int): The unique identifier for the model.
         name (str): The name of the model.
+        creation_date (str): The date of model creation.
     """
 
     id: int
     name: str
+    creation_date: str
 
     class Config:
         """
