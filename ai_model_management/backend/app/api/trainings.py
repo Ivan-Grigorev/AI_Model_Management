@@ -14,7 +14,6 @@ from ..schemas.training_schemas import TrainingCreate, TrainingResponse
 router = APIRouter()
 
 
-# Route to create a training
 @router.post('/trainings', response_model=TrainingResponse)
 def create_training(training: TrainingCreate, db: Session = Depends(get_db)):
     """
@@ -57,7 +56,6 @@ def create_training(training: TrainingCreate, db: Session = Depends(get_db)):
     return new_training
 
 
-# Route to list all trainings
 @router.get('/trainings', response_model=List[TrainingResponse])
 def list_trainings(db: Session = Depends(get_db)):
     """
@@ -71,7 +69,6 @@ def list_trainings(db: Session = Depends(get_db)):
     return trainings
 
 
-# Route to get a specific training by ID
 @router.get('/trainings/{training_id}', response_model=TrainingResponse)
 def get_training(training_id: int, db: Session = Depends(get_db)):
     """

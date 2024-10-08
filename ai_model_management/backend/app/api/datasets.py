@@ -13,7 +13,6 @@ from ..schemas.dataset_schemas import DatasetCreate, DatasetResponse
 router = APIRouter()
 
 
-# Route to create a dataset
 @router.post('/datasets', response_model=DatasetResponse)
 def create_dataset(dataset: DatasetCreate, db: Session = Depends(get_db)):
     """
@@ -35,7 +34,6 @@ def create_dataset(dataset: DatasetCreate, db: Session = Depends(get_db)):
     return new_dataset
 
 
-# Route to list all datasets
 @router.get('/datasets', response_model=List[DatasetResponse])
 def list_datasets(db: Session = Depends(get_db)):
     """
@@ -49,7 +47,6 @@ def list_datasets(db: Session = Depends(get_db)):
     return datasets
 
 
-# Route to get a specific dataset by ID
 @router.get('/datasets/{dataset_id}', response_model=DatasetResponse)
 def get_dataset(dataset_id: int, db: Session = Depends(get_db)):
     """

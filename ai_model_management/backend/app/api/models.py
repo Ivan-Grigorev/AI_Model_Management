@@ -13,7 +13,6 @@ from ..schemas.model_schemas import ModelCreate, ModelResponse
 router = APIRouter()
 
 
-# Route to create a model
 @router.post('/models', response_model=ModelResponse)
 def create_model(model: ModelCreate, db: Session = Depends(get_db)):
     """
@@ -35,7 +34,6 @@ def create_model(model: ModelCreate, db: Session = Depends(get_db)):
     return new_model
 
 
-# Route to list all models
 @router.get('/models', response_model=List[ModelResponse])
 def list_models(db: Session = Depends(get_db)):
     """
@@ -49,7 +47,6 @@ def list_models(db: Session = Depends(get_db)):
     return models
 
 
-# Router to get a specific model by ID
 @router.get('/models/{model_id}', response_model=ModelResponse)
 def get_model(model_id: int, db: Session = Depends(get_db)):
     """
