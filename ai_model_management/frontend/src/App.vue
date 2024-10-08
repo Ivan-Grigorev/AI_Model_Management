@@ -32,6 +32,9 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  background-color: #f3f4f6;
+  background-size: cover;
+  background-position: center;
 }
 
 nav {
