@@ -1,18 +1,41 @@
-"""API endpoint for user registration and login functionalities."""
+"""User management module."""
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from passlib.context import CryptContext
 from datetime import datetime
 
-from ..core.database import get_db
-from ..models.user_model import User
-from ..schemas.user_schemas import UserCreate, UserInDB, UserLogin
+from ..database.config import get_db
+from ..database.db_models import User
+from ..schemas.user_schemas import UserInDB, UserCreate
 
+# Create a router for user-related routes
 router = APIRouter()
+
+# Use OAuth2PasswordBearer for token authentication
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl='token')
 
 # Initialize password hashing context
 pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
+
+
+def authenticate_user(db: Session, email: str, password: str):
+    """
+    Authenticate a user by checking their email and password.
+
+    Attributes:
+        db (Session): SQLAlchemy session to access the database.
+        email (str): User's email address.
+        password (str): User's password.
+
+    Returns:
+        User: The authenticated user if the credentials are valid, otherwise None.
+    """
+    user = db.query(User).filter(User.email == email).first()
+    if user and pwd_context.verify(password, user.hashed_password):
+        return user
+    return None
 
 
 @router.post('/signin', response_model=UserInDB, status_code=status.HTTP_201_CREATED)
@@ -37,44 +60,77 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
         )
 
     hashed_password = pwd_context.hash(user.password)
-    # is_admin = user.email == 'admin@ai-model-app.co.jp' and user.password == 'YmUy0DUyMj'
     db_user = User(
         email=user.email,
         hashed_password=hashed_password,
         registration_date=datetime.now().date().strftime('%Y/%m/%d')
-    )  # , is_admin=is_admin)
+    )
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
     return db_user
 
 
-@router.post('/login')
-def login_user(user: UserLogin, db: Session = Depends(get_db)):
+@router.post('/login', response_model=dict)
+def login_user(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     """
-    User login end point.
+    User login endpoint.
 
     Attributes:
-        user (UserLogin): User credential for login.
+        form_data (OAuth2PasswordRequestForm): User credential for login.
         db (Session): SQLAlchemy database session.
 
     Returns:
-        HTTPException: If the user is not found or password is incorrect.
+        dict: A dictionary containing access token and redirect URL if applicable.
     """
-    db_user = db.query(User).filter(User.email == user.email).first()
-    if not db_user or not pwd_context.verify(user.password, db_user.hashed_password):
+    user = authenticate_user(db, form_data.username, form_data.password)
+    if not user:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail='Incorrect email or password'
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail='Incorrect email or password',
+            headers={'WWW-Authenticate': 'Bearer'},
         )
-    return {'message': 'Login successful'}
+
+    # Check if the user is an admin
+    if user.is_admin:
+        return {'access_token': user.email, 'token_type': 'bearer', 'redirect_url': '/admin/'}
+
+    return {'access_token': user.email, 'token_type': 'bearer'}
 
 
-@router.post('/logout')
-def logout():
+def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     """
-    Log out the user by invalidating their session or token.
+    Get the currently authenticated user based on their token.
+
+    Attributes:
+        token (str): The OAuth2 token for the current session.
+        db (Session): SQLAlchemy session to access the database.
 
     Returns:
-        dict: A message indicating successful logout.
+        User: The authenticated user.
+
+    Raises:
+        HTTPException: If the token is invalid or the user is not found.
     """
-    return {'message': 'Logout successful'}
+    user = db.query(User).filter(User.email == token).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Invalid credentials')
+    return user
+
+
+def get_current_admin(user: User = Depends(get_current_user)):
+    """
+    Ensure the current user is admin.
+
+    Attributes:
+        user (User): The currently authenticated user.
+
+    Returns:
+        User: The authenticated admin user.
+
+    Raises:
+        HTTPException: If the user is not admin.
+    """
+    if not user.is_admin:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='Not enough privileges')
+    return user

@@ -6,9 +6,8 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from ..core.database import get_db
-from ..models.other_models import Dataset, Model
-from ..models.user_model import User
+from ..database.config import get_db
+from ..database.db_models import Dataset, Model, User
 from ..schemas.dataset_schemas import DatasetCreate, DatasetResponse
 from ..schemas.model_schemas import ModelCreate, ModelResponse
 from ..schemas.user_schemas import UserInDB

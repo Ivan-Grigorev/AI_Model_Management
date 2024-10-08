@@ -7,8 +7,8 @@ from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from ..core.database import get_db
-from ..models.other_models import Dataset, Model, Training
+from ..database.config import get_db
+from ..database.db_models import Dataset, Model, Training
 from ..schemas.training_schemas import TrainingCreate, TrainingResponse
 
 router = APIRouter()
