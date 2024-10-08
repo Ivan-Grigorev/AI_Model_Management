@@ -4,7 +4,7 @@ const API_URL = 'http://localhost:8000/';  // Update this URL as necessary
 
 class AuthService {
   async signup(email, password) {
-    const response = await axios.post(`${API_URL}register`, { email, password });
+    const response = await axios.post(`${API_URL}signin`, { email, password });
     return response.data;
   }
 
