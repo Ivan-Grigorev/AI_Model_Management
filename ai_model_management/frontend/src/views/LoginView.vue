@@ -53,10 +53,20 @@ export default {
   methods: {
     async handleLogin() {
       try {
-        await AuthService.login(this.email, this.password);
-        this.$router.push('/home'); // Redirect to home after login
+        // Call the login service and capture the response
+        const response = await AuthService.login(this.email, this.password);
+
+        // Extract the redirect_url from the backend response
+        const redirectUrl = response.redirect_url;
+
+        // Check if the user is an admin or not and redirect accordingly
+        if (redirectUrl) {
+          this.$router.push(redirectUrl); // Dynamically push the route
+        } else {
+          this.errorMessage = 'Login failed. Please try again.';
+        }
       } catch (error) {
-        this.errorMessage = 'Login failed. Please try again.';
+        this.errorMessage = error.response?.data?.detail || 'Login failed. Please try again.';
       }
     }
   }

@@ -58,6 +58,7 @@ export default {
   },
   methods: {
     async handleSignUp() {
+      // Check if the passwords match
       if (this.password !== this.confirmPassword) {
         this.errorMessage = 'Passwords do not match.';
         return;
@@ -65,9 +66,9 @@ export default {
 
       try {
         await AuthService.signup(this.email, this.password);
-        this.$router.push('/login'); // Redirect to login after signup
+        this.$router.push('/login'); // Redirect to login after successful signup
       } catch (error) {
-        this.errorMessage = 'Signup failed. Please try again.';
+        this.errorMessage = error.response?.data?.detail || 'Signup failed. Please try again.';
       }
     }
   }
