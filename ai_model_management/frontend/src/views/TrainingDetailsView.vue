@@ -1,8 +1,12 @@
 <template>
-  <div class="container mx-auto py-6 px-4">
-    <h1 class="text-2xl font-bold mb-4">Training Details</h1>
+  <!-- Header -->
+  <header class="bg-green-600 text-white p-4 flex justify-between items-center">
+    <router-link to="/dashboard" class="text-2xl hover:underline">User Dashboard</router-link>
+    <h2 class="text-xl font-bold">Training Details</h2>
+  </header>
 
-    <div class="border p-4 rounded-lg bg-gray-100">
+  <div class="container mx-auto py-6 px-4">
+    <div class="border p-4 rounded-lg bg-white">
       <p><strong>ID:</strong> {{ training.id }}</p>
       <p><strong>Experiment Name:</strong> {{ training.experiment_name }}</p>
       <p><strong>Model:</strong> {{ training.model_name }} (ID: {{ training.model_id }})</p>
@@ -19,7 +23,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import apiClient from '@/services/apiService'; // Import the centralized API service
 
 export default {
   data() {
@@ -28,19 +32,18 @@ export default {
     };
   },
   methods: {
-    fetchTraining() {
-      const trainingId = this.$route.params.training_id;
-      axios.get(`/trainings/${trainingId}`)
-        .then(response => {
-          this.training = response.data;
-        })
-        .catch(error => {
-          console.error('Error fetching training:', error);
-        });
+    async fetchTraining() {
+      const trainingId = this.$route.params.training_id; // Get the training ID from route params
+      try {
+        const response = await apiClient.get(`/trainings/${trainingId}`); // Use apiClient to make the request
+        this.training = response.data;
+      } catch (error) {
+        console.error('Error fetching training:', error);
+      }
     }
   },
   created() {
-    this.fetchTraining();
+    this.fetchTraining(); // Fetch the training details when the component is created
   }
 };
 </script>

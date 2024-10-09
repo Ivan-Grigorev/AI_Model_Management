@@ -1,8 +1,11 @@
 <template>
-  <div class="container mx-auto p-4">
-    <!-- Page Header -->
-    <h1 class="text-2xl font-semibold mb-4">AI Datasets Dashboard</h1>
+  <!-- Header -->
+  <header class="bg-green-600 text-white p-4 flex justify-between items-center">
+    <router-link to="/dashboard" class="text-2xl hover:underline">User Dashboard</router-link>
+    <h2 class="text-xl font-bold">Datasets Management</h2>
+  </header>
 
+  <div class="container mx-auto p-4">
     <!-- Add Dataset Form -->
     <div class="bg-white shadow-md rounded-lg p-6 mb-6">
       <h2 class="text-2xl font-semibold mb-4">Add New Dataset</h2>
@@ -88,7 +91,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import apiClient from '@/services/apiService';
 
 export default {
   data() {
@@ -105,7 +108,7 @@ export default {
   methods: {
     async addDataset() {
       try {
-        const response = await axios.post('/datasets', this.newDataset);
+        const response = await apiClient.post('/datasets', this.newDataset);
         this.datasets.push(response.data);
         this.newDataset.name = ''; // Reset the form
       } catch (error) {
@@ -114,7 +117,7 @@ export default {
     },
     async fetchDatasets() {
       try {
-        const response = await axios.get('/datasets');
+        const response = await apiClient.get('/datasets');
         this.datasets = response.data;
       } catch (error) {
         console.error('Error fetching datasets:', error);
@@ -130,7 +133,7 @@ export default {
           const datasetId = parseInt(query);
           if (!isNaN(datasetId)) {
             // Searching by ID
-            const response = await axios.get(`/datasets/${datasetId}`);
+            const response = await apiClient.get(`/datasets/${datasetId}`);
             if (response.data) {
               this.foundDatasetId = datasetId; // Set the found dataset ID
             } else {
@@ -138,7 +141,7 @@ export default {
             }
           } else {
             // Searching by Name
-            const response = await axios.get(`/datasets`);
+            const response = await apiClient.get(`/datasets`);
             const dataset = response.data.find(d => d.name.toLowerCase() === query.toLowerCase());
             if (dataset) {
               this.foundDatasetId = dataset.id; // Set the found dataset ID

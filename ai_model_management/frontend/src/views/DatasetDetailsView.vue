@@ -1,8 +1,12 @@
 <template>
-  <div class="container mx-auto py-6 px-4">
-    <h1 class="text-2xl font-bold mb-4">Dataset Details</h1>
+  <!-- Header -->
+  <header class="bg-green-600 text-white p-4 flex justify-between items-center">
+    <router-link to="/dashboard" class="text-2xl hover:underline">User Dashboard</router-link>
+    <h2 class="text-xl font-bold">Dataset Details</h2>
+  </header>
 
-    <div class="border p-4 rounded-lg bg-gray-100">
+  <div class="container mx-auto py-6 px-4">
+    <div class="border p-4 rounded-lg bg-white">
       <p><strong>ID:</strong> {{ dataset.id }}</p>
       <p><strong>Name:</strong> {{ dataset.name }}</p>
       <p><strong>Creation Date:</strong> {{ dataset.creation_date }}</p>
@@ -15,7 +19,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import apiClient from '@/services/apiService';
 
 export default {
   data() {
@@ -24,15 +28,14 @@ export default {
     };
   },
   methods: {
-    fetchDataset() {
+    async fetchDataset() {
       const datasetId = this.$route.params.dataset_id;
-      axios.get(`/datasets/${datasetId}`)
-        .then(response => {
-          this.dataset = response.data;
-        })
-        .catch(error => {
-          console.error('Dataset not found', error);
-        });
+      try {
+        const response = await apiClient.get(`/datasets/${datasetId}`);
+        this.dataset = response.data;
+      } catch (error) {
+        console.error('Dataset not found:', error);
+      }
     }
   },
   created() {

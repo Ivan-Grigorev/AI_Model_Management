@@ -1,8 +1,11 @@
 <template>
-  <div class="container mx-auto p-4">
-    <!-- Page Header -->
-    <h1 class="text-2xl font-semibold mb-4">AI Training Dashboard</h1>
+  <!-- Header -->
+  <header class="bg-green-600 text-white p-4 flex justify-between items-center">
+    <router-link to="/dashboard" class="text-2xl hover:underline">User Dashboard</router-link>
+    <h2 class="text-xl font-bold">Trainings Management</h2>
+  </header>
 
+  <div class="container mx-auto p-4">
     <!-- Add Training Form -->
     <div class="bg-white shadow-md rounded-lg p-6 mb-6">
       <h2 class="text-lg font-bold mb-4">Add New Training</h2>
@@ -132,7 +135,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import apiClient from '@/services/apiService'; // Import the centralized API service
 
 export default {
   data() {
@@ -151,20 +154,20 @@ export default {
   },
   methods: {
     async fetchTrainings() {
-      // Axios call to fetch trainings
+      // API call to fetch trainings
       try {
-        const response = await axios.get('/trainings');
+        const response = await apiClient.get('/trainings');
         this.trainings = response.data;
       } catch (error) {
         console.error('Error fetching trainings:', error);
       }
     },
     async addTraining() {
-      // Axios call to add a new training
+      // API call to add a new training
       try {
         this.errorMessage = '';  // Reset the error message
 
-        const response = await axios.post('/trainings', this.newTraining);
+        const response = await apiClient.post('/trainings', this.newTraining);
         this.trainings.push(response.data);
 
         // Reset the form after successful submission
@@ -191,11 +194,11 @@ export default {
           // Try searching by ID first
           const trainingId = parseInt(query);
           if (!isNaN(trainingId)) {
-            await axios.get(`/trainings/${trainingId}`);
+            await apiClient.get(`/trainings/${trainingId}`);
             this.foundTrainingId = trainingId;
           } else {
             // If not a valid ID, search by training name
-            const response = await axios.get(`/trainings`);
+            const response = await apiClient.get(`/trainings`);
             const training = response.data.find(t => t.training_name.toLowerCase() === query.toLowerCase());
             if (training) {
               this.foundTrainingId = training.id;

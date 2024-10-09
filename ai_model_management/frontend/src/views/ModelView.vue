@@ -1,7 +1,10 @@
 <template>
+  <!-- Header -->
+  <header class="bg-green-600 text-white p-4 flex justify-between items-center">
+    <router-link to="/dashboard" class="text-2xl hover:underline">User Dashboard</router-link>
+    <h2 class="text-xl font-bold">Models Management</h2>
+  </header>
   <div class="container mx-auto p-4">
-    <!-- Page Header -->
-    <h1 class="text-2xl font-semibold mb-4">AI Model Dashboard</h1>
 
     <!-- Add Model Form -->
     <div class="bg-white shadow-md rounded-lg p-6 mb-6">
@@ -89,7 +92,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import apiClient from '@/services/apiService'; // Import the centralized API client
 
 export default {
   data() {
@@ -106,7 +109,7 @@ export default {
   methods: {
     async addModel() {
       try {
-        const response = await axios.post('/models', this.newModel);
+        const response = await apiClient.post('/models', this.newModel); // Use apiClient
         this.models.push(response.data);
         this.newModel.name = ''; // Reset the form
       } catch (error) {
@@ -115,7 +118,7 @@ export default {
     },
     async fetchModels() {
       try {
-        const response = await axios.get('/models');
+        const response = await apiClient.get('/models'); // Use apiClient
         this.models = response.data;
       } catch (error) {
         console.error('Error fetching models:', error);
@@ -131,7 +134,7 @@ export default {
           const modelId = parseInt(query);
           if (!isNaN(modelId)) {
             // Searching by ID
-            const response = await axios.get(`/models/${modelId}`);
+            const response = await apiClient.get(`/models/${modelId}`); // Use apiClient
             if (response.data) {
               this.foundModelId = modelId; // Set the found model ID
             } else {
@@ -139,7 +142,7 @@ export default {
             }
           } else {
             // Searching by Name
-            const response = await axios.get(`/models`);
+            const response = await apiClient.get('/models'); // Use apiClient
             const model = response.data.find(m => m.name.toLowerCase() === query.toLowerCase());
             if (model) {
               this.foundModelId = model.id; // Set the found model ID
