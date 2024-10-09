@@ -16,6 +16,7 @@ import AdminDatasetsView from '../views/AdminDatasetsView.vue';
 import AdminDatasetDetailsView from '../views/AdminDatasetDetailsView.vue';
 import AdminModelsView from '../views/AdminModelsView.vue';
 import AdminModelDetailsView from '../views/AdminModelDetailsView.vue';
+import UserView from '../views/UserView.vue';
 
 const routes = [
   {
@@ -97,6 +98,11 @@ const routes = [
     path: '/admin/models/:model_id',
     name: 'admin-model-details',
     component: AdminModelDetailsView
+  },
+  {
+    path: '/dashboard',
+    name: 'dashboard',
+    component: UserView
   }
 ];
 
