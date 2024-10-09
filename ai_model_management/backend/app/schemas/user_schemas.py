@@ -72,3 +72,25 @@ class UserLogin(BaseModel):
 
     email: str
     password: str
+
+
+class UserResponse(BaseModel):
+    """
+    Schema for returning user data from the database for admin.
+
+    Attributes:
+        id (int): Unique identifier for the user.
+        email (str): User's email address (used for login).
+        registration_date (str): The User's registration date.
+    """
+    id: int
+    email: str
+    registration_date: str
+
+    class Config:
+        """
+        Config class to enable Pydantic to work with ORM objects, allowing
+        initialization of the schema from attributes of database models.
+        """
+
+        from_attributes = True
