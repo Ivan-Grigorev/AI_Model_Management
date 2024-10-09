@@ -1,6 +1,32 @@
 """Pydantic schemas for user registration and login data validation."""
 
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
+
+
+class Token(BaseModel):
+    """
+    Schema for returning authentication tokens.
+
+    Attributes:
+        access_token (str): The JWT access token for the user.
+        token_type (str): The type of the token (e.g., 'bearer').
+        redirect_url (str | None): Optional URL to redirect after successful login.
+    """
+
+    access_token: str
+    token_type: str
+    redirect_url: str | None = None
+
+
+class TokenData(BaseModel):
+    """
+    Schema for the data extracted from the JWT token.
+
+    Attributes:
+        email (str | None): The email of the user associated with the token.
+    """
+
+    email: str | None = None
 
 
 class UserCreate(BaseModel):
@@ -12,23 +38,19 @@ class UserCreate(BaseModel):
         password (str): User's password.
     """
 
-    email: EmailStr
+    email: str
     password: str
 
 
-class UserInDB(BaseModel):
+class UserInDB(UserCreate):
     """
     Schema for returning user data from the database.
 
     Attributes:
-        id (int): Unique identifier for the user.
-        email (str): User's email address.
-        registration_date (str): The user registration date.
+        hashed_password (str): The hashed password of the user.
     """
 
-    id: int
-    email: EmailStr
-    registration_date: str
+    hashed_password: str
 
     class Config:
         """
@@ -48,5 +70,5 @@ class UserLogin(BaseModel):
         password (str): User's password.
     """
 
-    email: EmailStr
+    email: str
     password: str
