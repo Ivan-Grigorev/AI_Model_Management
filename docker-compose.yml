@@ -8,6 +8,8 @@ services:
     container_name: backend
     ports:
       - "8000:8000"
+    environment:
+      - SECRET_KEY=SECRET_KEY
     volumes:
       - ./ai_model_management/backend:/app
       - backend_data:/app/db
