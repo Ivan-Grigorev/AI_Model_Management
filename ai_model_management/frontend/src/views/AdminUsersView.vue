@@ -4,7 +4,6 @@
     <router-link to="/admin" class="text-2xl hover:underline">Admin Panel</router-link>
     <h2 class="text-xl font-bold">Users Management</h2>
   </header>
-
   <div class="container mx-auto mt-8">
 
     <!-- Table displaying all users -->
@@ -15,6 +14,7 @@
             <th scope="col" class="py-3 px-6">ID</th>
             <th scope="col" class="py-3 px-6">Email</th>
             <th scope="col" class="py-3 px-6">Registration Date</th>
+            <th scope="col" class="py-3 px-6">User Type</th>
             <th scope="col" class="py-3 px-6">Actions</th>
           </tr>
         </thead>
@@ -23,6 +23,7 @@
             <td class="py-3 px-6">{{ user.id }}</td>
             <td class="py-3 px-6">{{ user.email }}</td>
             <td class="py-3 px-6">{{ user.registration_date }}</td>
+            <td class="py-3 px-6">{{ user.is_admin ? 'Admin' : 'User' }}</td>
             <td class="py-3 px-6">
               <button
                 @click="deleteUser(user.email)"
@@ -39,7 +40,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import apiClient from '@/services/apiService'; // Import the centralized API service
 
 export default {
   data() {
@@ -50,11 +51,7 @@ export default {
   methods: {
     async fetchUsers() {
       try {
-        const response = await axios.get('/admin/users', {
-          headers: {
-            'Authorization': `Bearer ${this.getToken()}` // Add your token logic if necessary
-          }
-        });
+        const response = await apiClient.get('/admin/users'); // Use apiClient to fetch users
         this.users = response.data;
       } catch (error) {
         console.error('Error fetching users:', error);
@@ -63,12 +60,8 @@ export default {
     async deleteUser(email) {
       if (confirm(`Are you sure you want to delete ${email}?`)) {
         try {
-          const response = await axios.post(`/admin/users/delete/${email}`, null, {
-            headers: {
-              'Authorization': `Bearer ${this.getToken()}` // Add your token logic if necessary
-            }
-          });
-          if (response.status === 200) { // Check for successful deletion
+          const response = await apiClient.post(`/admin/users/delete/${email}`); // Use apiClient for deletion
+          if (response.status === 200) {
             alert(`User ${email} has been deleted.`);
             this.fetchUsers(); // Refresh the list after deletion
           } else {
@@ -82,14 +75,10 @@ export default {
     logout() {
       // Logic for logging out the admin
       this.$router.push('/login');
-    },
-    getToken() {
-      // Logic for getting the token (if needed)
-      return localStorage.getItem('token');
     }
   },
   mounted() {
-    this.fetchUsers();
+    this.fetchUsers(); // Fetch users when the component is mounted
   }
 };
 </script>

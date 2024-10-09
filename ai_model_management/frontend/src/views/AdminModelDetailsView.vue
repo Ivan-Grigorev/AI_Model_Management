@@ -2,12 +2,11 @@
   <!-- Header -->
   <header class="bg-blue-600 text-white p-4 flex justify-between items-center">
     <router-link to="/admin" class="text-2xl hover:underline">Admin Panel</router-link>
-    <h2 class="text-xl font-bold">Models Management</h2>
+    <h2 class="text-xl font-bold">Model Details</h2>
   </header>
-  <div class="container mx-auto py-6 px-4">
-    <h1 class="text-2xl font-bold mb-4">Model Details</h1>
 
-    <div class="border p-4 rounded-lg bg-gray-100">
+  <div class="container mx-auto py-6 px-4">
+    <div class="border p-4 rounded-lg bg-white">
       <p><strong>ID:</strong> {{ model.id }}</p>
       <p><strong>Name:</strong> {{ model.name }}</p>
       <p><strong>Creation Date:</strong> {{ model.creation_date }}</p>
@@ -29,7 +28,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import apiClient from '@/services/apiService'; // Import the centralized API service
 
 export default {
   data() {
@@ -38,20 +37,19 @@ export default {
     };
   },
   methods: {
-    fetchModel() {
+    async fetchModel() {
       const modelId = this.$route.params.model_id;
-      axios.get(`/admin/models/${modelId}`)
-        .then(response => {
-          this.model = response.data;
-        })
-        .catch(error => {
-          console.error('Model not found', error);
-        });
+      try {
+        const response = await apiClient.get(`/admin/models/${modelId}`); // Use apiClient to fetch the model
+        this.model = response.data;
+      } catch (error) {
+        console.error('Model not found:', error);
+      }
     },
     async deleteModel(modelId) {
       if (confirm('Are you sure you want to delete this model?')) {
         try {
-          await axios.delete(`/admin/models/${modelId}`);
+          await apiClient.delete(`/admin/models/${modelId}`); // Use apiClient to delete the model
           this.$router.push('/admin/models'); // Redirect to the models page
         } catch (error) {
           console.error('Error deleting model:', error);
@@ -60,7 +58,7 @@ export default {
     },
   },
   created() {
-    this.fetchModel();
+    this.fetchModel(); // Fetch the model when the component is created
   }
 };
 </script>

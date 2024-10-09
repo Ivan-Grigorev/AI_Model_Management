@@ -2,12 +2,10 @@
   <!-- Header -->
   <header class="bg-blue-600 text-white p-4 flex justify-between items-center">
     <router-link to="/admin" class="text-2xl hover:underline">Admin Panel</router-link>
-    <h2 class="text-xl font-bold">Datasets Management</h2>
+    <h2 class="text-xl font-bold">Dataset Details</h2>
   </header>
   <div class="container mx-auto py-6 px-4">
-    <h1 class="text-2xl font-bold mb-4">Dataset Details</h1>
-
-    <div class="border p-4 rounded-lg bg-gray-100">
+    <div class="border p-4 rounded-lg bg-white">
       <p><strong>ID:</strong> {{ dataset.id }}</p>
       <p><strong>Name:</strong> {{ dataset.name }}</p>
       <p><strong>Creation Date:</strong> {{ dataset.creation_date }}</p>
@@ -29,7 +27,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import apiClient from '@/services/apiService'; // Import the centralized API service
 
 export default {
   data() {
@@ -38,20 +36,19 @@ export default {
     };
   },
   methods: {
-    fetchDataset() {
+    async fetchDataset() {
       const datasetId = this.$route.params.dataset_id;
-      axios.get(`/admin/datasets/${datasetId}`)
-        .then(response => {
-          this.dataset = response.data;
-        })
-        .catch(error => {
-          console.error('Dataset not found', error);
-        });
+      try {
+        const response = await apiClient.get(`/admin/datasets/${datasetId}`); // Use apiClient to fetch the dataset
+        this.dataset = response.data;
+      } catch (error) {
+        console.error('Dataset not found:', error);
+      }
     },
     async deleteDataset(datasetId) {
       if (confirm('Are you sure you want to delete this dataset?')) {
         try {
-          await axios.delete(`/admin/datasets/${datasetId}`);
+          await apiClient.delete(`/admin/datasets/${datasetId}`); // Use apiClient to delete the dataset
           this.$router.push('/admin/datasets'); // Redirect to the datasets page
         } catch (error) {
           console.error('Error deleting dataset:', error);
@@ -60,7 +57,7 @@ export default {
     },
   },
   created() {
-    this.fetchDataset();
+    this.fetchDataset(); // Fetch the dataset when the component is created
   }
 };
 </script>

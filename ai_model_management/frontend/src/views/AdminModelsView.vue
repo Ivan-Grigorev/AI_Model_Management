@@ -96,7 +96,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import apiClient from '@/services/apiService'; // Import the centralized API service
 
 export default {
   data() {
@@ -113,7 +113,7 @@ export default {
   methods: {
     async addModel() {
       try {
-        const response = await axios.post('/admin/models', this.newModel);
+        const response = await apiClient.post('/admin/models', this.newModel);
         this.models.push(response.data);
         this.newModel.name = ''; // Reset the form
       } catch (error) {
@@ -122,7 +122,7 @@ export default {
     },
     async fetchModels() {
       try {
-        const response = await axios.get('/models');
+        const response = await apiClient.get('/admin/models'); // Ensure the correct endpoint for admin
         this.models = response.data;
       } catch (error) {
         console.error('Error fetching models:', error);
@@ -131,7 +131,7 @@ export default {
     async deleteModel(modelId) {
       if (confirm('Are you sure you want to delete this model?')) {
         try {
-          await axios.delete(`/admin/models/${modelId}`);
+          await apiClient.delete(`/admin/models/${modelId}`);
           this.models = this.models.filter(model => model.id !== modelId);
         } catch (error) {
           console.error('Error deleting model:', error);
@@ -148,7 +148,7 @@ export default {
           const modelId = parseInt(query);
           if (!isNaN(modelId)) {
             // Searching by ID
-            const response = await axios.get(`/models/${modelId}`);
+            const response = await apiClient.get(`/admin/models/${modelId}`);
             if (response.data) {
               this.foundModelId = modelId; // Set the found model ID
             } else {
@@ -156,7 +156,7 @@ export default {
             }
           } else {
             // Searching by Name
-            const response = await axios.get('/models');
+            const response = await apiClient.get('/admin/models');
             const model = response.data.find(m => m.name.toLowerCase() === query.toLowerCase());
             if (model) {
               this.foundModelId = model.id; // Set the found model ID

@@ -96,7 +96,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import apiClient from '@/services/apiService'; // Import the centralized API service
 
 export default {
   data() {
@@ -113,7 +113,7 @@ export default {
   methods: {
     async addDataset() {
       try {
-        const response = await axios.post('/admin/datasets', this.newDataset);
+        const response = await apiClient.post('/admin/datasets', this.newDataset);
         this.datasets.push(response.data);
         this.newDataset.name = ''; // Reset the form
       } catch (error) {
@@ -122,7 +122,7 @@ export default {
     },
     async fetchDatasets() {
       try {
-        const response = await axios.get('/datasets');
+        const response = await apiClient.get('/admin/datasets'); // Ensure the correct endpoint for admin
         this.datasets = response.data;
       } catch (error) {
         console.error('Error fetching datasets:', error);
@@ -131,7 +131,7 @@ export default {
     async deleteDataset(datasetId) {
       if (confirm('Are you sure you want to delete this dataset?')) {
         try {
-          await axios.delete(`/admin/datasets/${datasetId}`);
+          await apiClient.delete(`/admin/datasets/${datasetId}`);
           this.datasets = this.datasets.filter(dataset => dataset.id !== datasetId);
         } catch (error) {
           console.error('Error deleting dataset:', error);
@@ -148,7 +148,7 @@ export default {
           const datasetId = parseInt(query);
           if (!isNaN(datasetId)) {
             // Searching by ID
-            const response = await axios.get(`/datasets/${datasetId}`);
+            const response = await apiClient.get(`/admin/datasets/${datasetId}`);
             if (response.data) {
               this.foundDatasetId = datasetId; // Set the found dataset ID
             } else {
@@ -156,7 +156,7 @@ export default {
             }
           } else {
             // Searching by Name
-            const response = await axios.get('/datasets');
+            const response = await apiClient.get('/admin/datasets');
             const dataset = response.data.find(d => d.name.toLowerCase() === query.toLowerCase());
             if (dataset) {
               this.foundDatasetId = dataset.id; // Set the found dataset ID
