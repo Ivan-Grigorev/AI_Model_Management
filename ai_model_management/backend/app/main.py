@@ -7,7 +7,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .api import admin, datasets, models, trainings, users
-from .database.config import Base, engine
+from .api.users import register_admin
+from .database.config import Base, SessionLocal, engine
 
 # Create all tables in database
 Base.metadata.create_all(bind=engine)
@@ -41,3 +42,16 @@ def read_home():
          A welcome message to the user.
     """
     return {'message': 'Welcome to the AI Model Management App!'}
+
+
+def startup_event():
+    """
+    Create a new database session and register the admin user.
+    """
+    db = SessionLocal()
+    register_admin(db)
+    db.close()
+
+
+# Register the startup event handler
+app.add_event_handler('startup', startup_event)
