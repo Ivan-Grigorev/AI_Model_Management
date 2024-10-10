@@ -10,6 +10,8 @@ services:
       - "8000:8000"
     environment:
       - SECRET_KEY=SECRET_KEY
+      - ADMIN_EMAIL=admin@ai-model-app.co.jp
+      - ADMIN_PASSWORD=YmUyODUyMj
     volumes:
       - ./ai_model_management/backend:/app
       - backend_data:/app/db
