@@ -29,11 +29,11 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 
-def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     """
     Retrieve the currently authenticated user based on the provided JWT token.
 
-    Args:
+    Attributes:
         token (str): JWT token passed through the request header.
         db (Session): SQLAlchemy session object for database access.
 
@@ -66,7 +66,7 @@ def verify_password(plain_password, hashed_password):
     """
     Verify that a plain password matches its hashed equivalent.
 
-    Args:
+    Attributes:
         plain_password (str): The plain text password provided by the user.
         hashed_password (str): The hashed password stored in the database.
 
@@ -80,7 +80,7 @@ def get_password_hash(password):
     """
     Hash a plain text password.
 
-    Args:
+    Attributes:
         password (str): The plain text password to hash.
 
     Returns:
@@ -93,7 +93,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     """
     Create a JWT access token.
 
-    Args:
+    Attributes:
         data (dict): The data to encode into the JWT token.
         expires_delta (Optional[timedelta]): The expiration time for the token. If not provided, defaults to 30 minutes.
 
@@ -114,7 +114,7 @@ def get_user(email: str, db: Session = Depends(get_db)):
     """
     Retrieve a user from the database by email.
 
-    Args:
+    Attributes:
         email (str): The email of the user to retrieve.
         db (Session): SQLAlchemy session object for database access.
 
@@ -128,7 +128,7 @@ def authenticate_user(email: str, password: str, db: Session = Depends(get_db)):
     """
     Authenticate a user by verifying their email and password.
 
-    Args:
+    Attributes:
         email (str): The user's email.
         password (str): The user's plain text password.
         db (Session): SQLAlchemy session object for database access.
@@ -149,7 +149,7 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
     """
     User registration endpoint. Creates a new user account and returns a JWT token.
 
-    Args:
+    Attributes:
         user (UserCreate): The user details provided in the request body.
         db (Session): SQLAlchemy session object for database access.
 
@@ -181,11 +181,11 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
 
 
 @router.post('/token', response_model=Token)
-def login_for_access_token(user_login: UserLogin, db: Session = Depends(get_db)):
+async def login_for_access_token(user_login: UserLogin, db: Session = Depends(get_db)):
     """
     User login endpoint. Authenticates a user and returns a JWT token.
 
-    Args:
+    Attributes:
         user_login (UserLogin): The user's login credentials (email and password).
         db (Session): SQLAlchemy session object for database access.
 
@@ -212,14 +212,55 @@ def login_for_access_token(user_login: UserLogin, db: Session = Depends(get_db))
 
 
 @router.get('/users/me', response_model=UserCreate)
-def read_users_me(current_user: Annotated[dict, Depends(get_current_user)]):
+async def read_users_me(current_user: Annotated[dict, Depends(get_current_user)]):
     """
     Retrieve the details of the currently authenticated user.
 
-    Args:
+    Attributes:
         current_user (dict): The currently authenticated user's details.
 
     Returns:
         dict: The authenticated user's details.
     """
     return current_user
+
+
+def register_admin(db: Session = Depends(get_db)):
+    """
+    Admin registration endpoint. Creates an admin account and returns a JWT token.
+
+    Attributes:
+        db (Session): SQLAlchemy session object for database access.
+
+    Returns:
+        dict: A dictionary containing the access token and token type.
+
+    Raises:
+        HTTP 500 If the admin credentials are not set in environment variables.
+    """
+    # Get admin credentials from environment variables
+    admin_email = os.getenv('ADMIN_EMAIL')
+    admin_password = os.getenv('ADMIN_PASSWORD')
+
+    if not admin_email or not admin_password:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail='Admin credentials are not set in environment variables',
+        )
+
+    existing_admin = get_user(admin_email, db)
+    if existing_admin:
+        return {'message': 'Admin already exists'}
+
+    hashed_password = get_password_hash(admin_password)
+    db_admin = User(
+        email=admin_email,
+        hashed_password=hashed_password,
+        registration_date=datetime.now().date().strftime('%Y/%m/%d'),
+        is_admin=True,
+    )
+    db.add(db_admin)
+    db.commit()
+    db.refresh(db_admin)
+    access_token = create_access_token(data={'sub': db_admin.email})
+    return {'access_token': access_token, 'token_type': 'bearer'}
