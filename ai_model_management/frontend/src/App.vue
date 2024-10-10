@@ -37,6 +37,10 @@ export default {
   background-position: center;
 }
 
+body {
+  background-color: #f3f4f6;
+}
+
 nav {
   padding: 30px;
   position: relative; /* Add relative positioning */
