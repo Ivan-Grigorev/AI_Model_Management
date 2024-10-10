@@ -82,10 +82,12 @@ class UserResponse(BaseModel):
         id (int): Unique identifier for the user.
         email (str): User's email address (used for login).
         registration_date (str): The User's registration date.
+        is_admin (bool): Indicates if the user is admin.
     """
     id: int
     email: str
     registration_date: str
+    is_admin: bool
 
     class Config:
         """
