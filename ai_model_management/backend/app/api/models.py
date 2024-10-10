@@ -53,7 +53,9 @@ def list_models(db: Session = Depends(get_db), current_user: User = Depends(get_
         List of all models in the database.
     """
 
-    models = db.query(Model).filter(Model.user_id == current_user.id).all()
+    models = db.query(Model).filter(
+        (Model.user_id == current_user.id) | Model.user_is_admin
+    ).all()
     return models
 
 
@@ -76,7 +78,11 @@ def get_model(
     """
 
     model = (
-        db.query(Model).filter((Model.id == model_id) & (Model.user_id == current_user.id)).first()
+        db.query(Model).filter(
+            (Model.id == model_id) &
+            (Model.user_id == current_user.id) |
+            Model.user_is_admin
+        ).first()
     )
     if not model:
         raise HTTPException(status_code=404, detail='Model not found')

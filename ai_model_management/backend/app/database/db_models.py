@@ -48,6 +48,7 @@ class Dataset(Base):
         name (str): The name of the dataset.
         creation_date (str): The creation date of dataset.
         user_id (int): The ID of the user who created this dataset.
+        user_is_admin (bool): Indicates if the dataset was created by an admin.
 
     Relationships:
         owner: A many-to-one relationship wih the User table,
@@ -63,6 +64,7 @@ class Dataset(Base):
     creation_date = Column(String)
 
     user_id = Column(Integer, ForeignKey('users.id'))
+    user_is_admin = Column(Boolean, default=False)
 
     owner = relationship('User', back_populates='datasets')
     trainings = relationship('Training', back_populates='dataset')
@@ -77,6 +79,7 @@ class Model(Base):
         name (str): The name of the model.
         creation_date (str): The creation date of model.
         user_id (int): The ID of the user who created this model.
+        user_is_admin (bool): Indicates if the model was created by an admin.
 
     Relationships:
         owner: A many-to-one relationship with the User table,
@@ -92,6 +95,7 @@ class Model(Base):
     creation_date = Column(String)
 
     user_id = Column(Integer, ForeignKey('users.id'))
+    user_is_admin = Column(Boolean, default=False)
 
     owner = relationship('User', back_populates='models')
     trainings = relationship('Training', back_populates='model')

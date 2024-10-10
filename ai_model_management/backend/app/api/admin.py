@@ -99,7 +99,9 @@ def create_dataset(
             detail='Not enough privileges to access this resource',
         )
     new_dataset = Dataset(
-        name=dataset.name, creation_date=datetime.now().strftime('%Y/%m/%d %H:%M:%S')
+        name=dataset.name,
+        creation_date=datetime.now().strftime('%Y/%m/%d %H:%M:%S'),
+        user_is_admin=current_user.is_admin
     )
     db.add(new_dataset)
     db.commit()
@@ -219,7 +221,11 @@ def create_model(
             status_code=status.HTTP_403_FORBIDDEN,
             detail='Not enough privileges to access this resource',
         )
-    new_model = Model(name=model.name, creation_date=datetime.now().strftime('%Y/%m/%d %H:%M:%S'))
+    new_model = Model(
+        name=model.name,
+        creation_date=datetime.now().strftime('%Y/%m/%d %H:%M:%S'),
+        user_is_admin=current_user.is_admin
+    )
     db.add(new_model)
     db.commit()
     db.refresh(new_model)

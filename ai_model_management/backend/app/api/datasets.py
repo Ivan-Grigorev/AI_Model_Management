@@ -16,9 +16,9 @@ router = APIRouter()
 
 @router.post('/datasets', response_model=DatasetResponse)
 def create_dataset(
-    dataset: DatasetCreate,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+        dataset: DatasetCreate,
+        db: Session = Depends(get_db),
+        current_user: User = Depends(get_current_user),
 ):
     """
     Create a new dataset.
@@ -53,14 +53,15 @@ def list_datasets(db: Session = Depends(get_db), current_user: User = Depends(ge
     Returns:
         List all datasets in the database.
     """
-
-    datasets = db.query(Dataset).filter(Dataset.user_id == current_user.id).all()
+    datasets = db.query(Dataset).filter(
+        (Dataset.user_id == current_user.id) | Dataset.user_is_admin
+    ).all()
     return datasets
 
 
 @router.get('/datasets/{dataset_id}', response_model=DatasetResponse)
 def get_dataset(
-    dataset_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)
+        dataset_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)
 ):
     """
     Retrieve a specific dataset by its ID.
@@ -77,9 +78,11 @@ def get_dataset(
     """
 
     dataset = (
-        db.query(Dataset)
-        .filter((Dataset.id == dataset_id) & (Dataset.user_id == current_user.id))
-        .first()
+        db.query(Dataset).filter(
+            (Dataset.id == dataset_id) &
+            (Dataset.user_id == current_user.id) |
+            Dataset.user_is_admin
+        ).first()
     )
     if not dataset:
         raise HTTPException(status_code=404, detail='Dataset not found')

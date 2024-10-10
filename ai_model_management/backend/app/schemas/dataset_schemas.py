@@ -22,11 +22,13 @@ class DatasetResponse(BaseModel):
         id (int): The unique identifier for the dataset.
         name (str): The name of the dataset.
         creation_date (str): The date of dataset creation.
+        user_is_admin (bool): Indicates if the dataset was created by an admin.
     """
 
     id: int
     name: str
     creation_date: str
+    user_is_admin: bool
 
     class Config:
         """
