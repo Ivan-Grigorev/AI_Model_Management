@@ -7,7 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from ..database.config import get_db
-from ..database.db_models import Model, User
+from ..database.db_models import Dataset, Model, User
 from ..schemas.model_schemas import ModelCreate, ModelResponse
 from .users import get_current_user
 
@@ -53,9 +53,7 @@ def list_models(db: Session = Depends(get_db), current_user: User = Depends(get_
         List of all models in the database.
     """
 
-    models = db.query(Model).filter(
-        (Model.user_id == current_user.id) | Model.user_is_admin
-    ).all()
+    models = db.query(Model).filter((Model.user_id == current_user.id) | Model.user_is_admin).all()
     return models
 
 
@@ -76,14 +74,15 @@ def get_model(
     Raises:
         HTTP 404 if not found.
     """
-
     model = (
-        db.query(Model).filter(
-            (Model.id == model_id) &
-            (Model.user_id == current_user.id) |
-            Model.user_is_admin
-        ).first()
+        db.query(Model)
+        .filter(
+            (Model.id == model_id)
+            & ((Model.user_id == current_user.id) | Model.user_is_admin)
+        )
+        .first()
     )
+
     if not model:
         raise HTTPException(status_code=404, detail='Model not found')
     return model
