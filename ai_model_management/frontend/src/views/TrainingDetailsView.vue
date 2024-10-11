@@ -8,7 +8,7 @@
   <div class="container mx-auto py-6 px-4">
     <div class="border p-4 rounded-lg bg-white">
       <p><strong>ID:</strong> {{ training.id }}</p>
-      <p><strong>Experiment Name:</strong> {{ training.experiment_name }}</p>
+      <p><strong>Training Name:</strong> {{ training.training_name }}</p>
       <p><strong>Model:</strong> {{ training.model_name }} (ID: {{ training.model_id }})</p>
       <p><strong>Dataset:</strong> {{ training.dataset_name }} (ID: {{ training.dataset_id }})</p>
       <p><strong>Precision:</strong> {{ (training.precision * 100).toFixed(2) }}%</p>
