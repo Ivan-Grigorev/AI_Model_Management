@@ -22,13 +22,11 @@ class ModelResponse(BaseModel):
         id (int): The unique identifier for the model.
         name (str): The name of the model.
         creation_date (str): The date of model creation.
-        user_is_admin (bool): Indicates if the model was created by an admin.
     """
 
     id: int
     name: str
     creation_date: str
-    user_is_admin: bool
 
     class Config:
         """

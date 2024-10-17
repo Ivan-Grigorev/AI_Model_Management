@@ -2,7 +2,7 @@
 
 import os
 from datetime import datetime, timedelta
-from typing import Annotated, Optional
+from typing import Annotated, List, Optional
 
 import jwt
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -12,7 +12,7 @@ from sqlalchemy.orm import Session
 
 from ..database.config import get_db
 from ..database.db_models import User
-from ..schemas.user_schemas import Token, TokenData, UserCreate, UserLogin
+from ..schemas.user_schemas import Token, TokenData, UserCreate, UserLogin, UserResponse
 
 # Create a router for user-related routes
 router = APIRouter()
@@ -171,7 +171,6 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
     db_user = User(
         email=user.email,
         hashed_password=hashed_password,
-        registration_date=datetime.now().date().strftime('%Y/%m/%d'),
     )
     db.add(db_user)
     db.commit()
@@ -256,7 +255,6 @@ def register_admin(db: Session = Depends(get_db)):
     db_admin = User(
         email=admin_email,
         hashed_password=hashed_password,
-        registration_date=datetime.now().date().strftime('%Y/%m/%d'),
         is_admin=True,
     )
     db.add(db_admin)
@@ -264,3 +262,64 @@ def register_admin(db: Session = Depends(get_db)):
     db.refresh(db_admin)
     access_token = create_access_token(data={'sub': db_admin.email})
     return {'access_token': access_token, 'token_type': 'bearer'}
+
+
+# Admin functionality: Endpoints related to administrative tasks
+
+
+@router.get('/admin/users', response_model=List[UserResponse])
+def admin_get_all_users(
+    db: Session = Depends(get_db), current_user: User = Depends(get_current_user)
+):
+    """
+    Retrieve a list of all users in the database. Admin access only.
+
+    Attributes:
+        db (Session): SQLAlchemy session to access the database.
+        current_user (User): The currently authenticated user.
+
+    Returns:
+        List of all users with their data.
+
+    Raises:
+        HTTP 403 if user does not have access.
+    """
+    if not current_user.is_admin:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail='Not enough privileges to access this resource',
+        )
+    users = db.query(User).all()
+    return users
+
+
+@router.post('/admin/users/delete/{email}')
+def admin_delete_user(
+    email: str, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)
+):
+    """
+    Delete a user from the database by email. Admin access only.
+
+    Attributes:
+        email (str): Email of the user to be deleted.
+        db (Session): SQLAlchemy session to access the database.
+        current_user (User): The currently authenticated user.
+
+    Returns:
+        dict: A message confirming the user deletion.
+
+    Raises:
+        HTTP 403 if user does not have access.
+        HTTP 404 if the user with the specific email is not found.
+    """
+    if not current_user.is_admin:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail='Not enough privileges to access this resource',
+        )
+    db_user = db.query(User).filter(User.email == email).first()
+    if not db_user:
+        raise HTTPException(status_code=404, detail='User not found')
+    db.delete(db_user)
+    db.commit()
+    return {'message': f"User {email} has been deleted"}

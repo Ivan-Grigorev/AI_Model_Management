@@ -1,7 +1,6 @@
 """API routes for creating, listing, and fetching specific trainings."""
 
 import random
-from datetime import datetime
 from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -32,18 +31,33 @@ def create_training(
         The created training.
     """
 
-    # Check if the model exists
-    model = db.query(Model).filter(Model.id == training.model_id).first()
+    # Check if the model created by the current user or admin exists
+    model = (
+        db.query(Model)
+        .join(User)
+        .filter(
+            (Model.id == training.model_id) & ((Model.user_id == current_user.id) | User.is_admin)
+        )
+        .first()
+    )
     if not model:
         raise HTTPException(
             status_code=404, detail=f"The Model with ID {training.model_id} not found"
         )
 
-    # Check if the dataset exists
-    dataset = db.query(Dataset).filter(Dataset.id == training.dataset_id).first()
+    # Check if the dataset created by the current user or admin exists
+    dataset = (
+        db.query(Dataset)
+        .join(User)
+        .filter(
+            (Dataset.id == training.dataset_id)
+            & ((Dataset.user_id == current_user.id) | User.is_admin)
+        )
+        .first()
+    )
     if not dataset:
         raise HTTPException(
-            status_code=404, detail=f"The Dataset by {training.dataset_id} ID does not exist"
+            status_code=404, detail=f"The Dataset with ID {training.dataset_id} not found"
         )
 
     new_training = Training(
@@ -54,7 +68,6 @@ def create_training(
         dataset_name=dataset.name,
         precision=random.uniform(0, 1),  # random precision value between 0 and 1
         recall=random.uniform(0, 1),  # random recall value between 0 and 1
-        creation_date=datetime.now().strftime('%Y/%m/%d %H:%M:%S'),
         user_id=current_user.id,
     )
     db.add(new_training)

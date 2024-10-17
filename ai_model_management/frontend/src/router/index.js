@@ -4,6 +4,7 @@ import AboutView from '../views/AboutView.vue';
 import HomeView from '../views/HomeView.vue';
 import SignUpView from '../views/SignUpView.vue';
 import LoginView from '../views/LoginView.vue';
+import UserView from '../views/UserView.vue';
 import DatasetView from '../views/DatasetView.vue';
 import DatasetDetailsView from '../views/DatasetDetailsView.vue';
 import ModelView from '../views/ModelView.vue';
@@ -16,7 +17,7 @@ import AdminDatasetsView from '../views/AdminDatasetsView.vue';
 import AdminDatasetDetailsView from '../views/AdminDatasetDetailsView.vue';
 import AdminModelsView from '../views/AdminModelsView.vue';
 import AdminModelDetailsView from '../views/AdminModelDetailsView.vue';
-import UserView from '../views/UserView.vue';
+
 
 const routes = [
   {
@@ -38,6 +39,11 @@ const routes = [
     path: '/login',
     name: 'login',
     component: LoginView
+  },
+  {
+    path: '/dashboard',
+    name: 'dashboard',
+    component: UserView
   },
   {
     path: '/datasets',
@@ -99,11 +105,6 @@ const routes = [
     name: 'admin-model-details',
     component: AdminModelDetailsView
   },
-  {
-    path: '/dashboard',
-    name: 'dashboard',
-    component: UserView
-  }
 ];
 
 const router = createRouter({

@@ -2,6 +2,7 @@
 
 from sqlalchemy import Column, Float, ForeignKey, Integer, String, Boolean
 from sqlalchemy.orm import relationship
+from datetime import datetime
 
 from .config import Base
 
@@ -31,7 +32,7 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True)
     hashed_password = Column(String)
-    registration_date = Column(String)
+    registration_date = Column(String, default=datetime.now().strftime('%Y/%m/%d %H:%M:%S'))
     is_admin = Column(Boolean, default=False)
 
     datasets = relationship('Dataset', back_populates='owner')
@@ -48,7 +49,6 @@ class Dataset(Base):
         name (str): The name of the dataset.
         creation_date (str): The creation date of dataset.
         user_id (int): The ID of the user who created this dataset.
-        user_is_admin (bool): Indicates if the dataset was created by an admin.
 
     Relationships:
         owner: A many-to-one relationship wih the User table,
@@ -61,10 +61,9 @@ class Dataset(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
-    creation_date = Column(String)
+    creation_date = Column(String, default=datetime.now().strftime('%Y/%m/%d %H:%M:%S'))
 
     user_id = Column(Integer, ForeignKey('users.id'))
-    user_is_admin = Column(Boolean, default=False)
 
     owner = relationship('User', back_populates='datasets')
     trainings = relationship('Training', back_populates='dataset')
@@ -79,7 +78,6 @@ class Model(Base):
         name (str): The name of the model.
         creation_date (str): The creation date of model.
         user_id (int): The ID of the user who created this model.
-        user_is_admin (bool): Indicates if the model was created by an admin.
 
     Relationships:
         owner: A many-to-one relationship with the User table,
@@ -92,10 +90,9 @@ class Model(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
-    creation_date = Column(String)
+    creation_date = Column(String, default=datetime.now().strftime('%Y/%m/%d %H:%M:%S'))
 
     user_id = Column(Integer, ForeignKey('users.id'))
-    user_is_admin = Column(Boolean, default=False)
 
     owner = relationship('User', back_populates='models')
     trainings = relationship('Training', back_populates='model')
@@ -136,7 +133,7 @@ class Training(Base):
     dataset_name = Column(String)
     precision = Column(Float)
     recall = Column(Float)
-    creation_date = Column(String)
+    creation_date = Column(String, default=datetime.now().strftime('%Y/%m/%d %H:%M:%S'))
 
     user_id = Column(Integer, ForeignKey('users.id'))
 
