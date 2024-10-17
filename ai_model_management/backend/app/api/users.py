@@ -235,7 +235,7 @@ def register_admin(db: Session = Depends(get_db)):
         dict: A dictionary containing the access token and token type.
 
     Raises:
-        HTTP 500 If the admin credentials are not set in environment variables.
+        HTTPException: HTTP 500 If the admin credentials are not set in environment variables.
     """
     # Get admin credentials from environment variables
     admin_email = os.getenv('ADMIN_EMAIL')
@@ -282,7 +282,7 @@ def admin_get_all_users(
         List of all users with their data.
 
     Raises:
-        HTTP 403 if user does not have access.
+        HTTPException: HTTP 403 if user does not have access.
     """
     if not current_user.is_admin:
         raise HTTPException(
@@ -309,8 +309,8 @@ def admin_delete_user(
         dict: A message confirming the user deletion.
 
     Raises:
-        HTTP 403 if user does not have access.
-        HTTP 404 if the user with the specific email is not found.
+        HTTPException: HTTP 403 if user does not have access.
+        HTTPException: HTTP 404 if the user with the specific email is not found.
     """
     if not current_user.is_admin:
         raise HTTPException(

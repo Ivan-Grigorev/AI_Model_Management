@@ -24,11 +24,14 @@ def create_training(
     Create a new training.
 
     Attributes:
-        training: TrainingCreate object containing the name of the model.
-        current_user: The currently authenticated user.
+        training (TrainingCreate): An object containing the details of training to be created.
+        current_user (User): The currently authenticated user.
 
     Returns:
-        The created training.
+        TrainingResponse: The created training.
+
+    Raises:
+        HTTPException: HTTP 404 if model or dataset not found.
     """
 
     # Check if the model created by the current user or admin exists
@@ -81,6 +84,10 @@ def list_trainings(db: Session = Depends(get_db), current_user: User = Depends(g
     """
     Get all trainings.
 
+    Attributes:
+        db (Session): SQLAlchemy session to access the database.
+        current_user (User): The currently authenticated user.
+
     Returns:
         List of all trainings in the database.
     """
@@ -98,13 +105,14 @@ def get_training(
 
     Attributes:
         training_id (int): The ID of the training to retrieve.
-        current_user: The currently authenticated user.
+        db (Session): SQLAlchemy session to access the database.
+        current_user (User): The currently authenticated user.
 
     Returns:
-        The training if found.
+        TrainingResponse: The training if found.
 
     Raises:
-        HTTP 404 if not found.
+        HTTPException: HTTP 404 if training not found.
     """
 
     training = (

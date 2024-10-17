@@ -47,10 +47,11 @@ def list_datasets(db: Session = Depends(get_db), current_user: User = Depends(ge
     Get all datasets.
 
     Attributes:
-        current_user: The currently authenticated user.
+        db (Session): SQLAlchemy session to access the database.
+        current_user (User): The currently authenticated user.
 
     Returns:
-        List all datasets in the database.
+        List of all datasets in the database.
     """
 
     datasets = (
@@ -72,13 +73,14 @@ def get_dataset(
 
     Attributes:
         dataset_id (int): The ID of the dataset to retrieve.
-        current_user: The currently authenticated user.
+        db (Session): SQLAlchemy session to access the database.
+        current_user (User): The currently authenticated user.
 
     Returns:
-         The dataset if found.
+         DatasetResponse: The dataset if found.
 
      Raises:
-         HTTP 404 if not found.
+         HTTPException: HTTP 404 if dataset not found.
     """
 
     dataset = (
@@ -113,7 +115,7 @@ def admin_create_dataset(
          DatasetResponse: The created dataset.
 
     Raises:
-        HTTP 403 if user does not have access.
+        HTTPException: HTTP 403 if user does not have access.
     """
     if not current_user.is_admin:
         raise HTTPException(
@@ -138,7 +140,7 @@ def admin_list_datasets(
         List of all datasets in the database.
 
     Raises:
-        HTTP 403 if user does not have access.
+        HTTPException: HTTP 403 if user does not have access.
     """
     if not current_user.is_admin:
         raise HTTPException(
@@ -164,8 +166,8 @@ def admin_delete_dataset(
         dict: A message indicating successful deletion.
 
     Raises:
-        HTTP 403 if user does not have access.
-        HTTP 404 if the dataset is not found.
+        HTTPException: HTTP 403 if user does not have access.
+        HTTPException: HTTP 404 if the dataset is not found.
     """
     if not current_user.is_admin:
         raise HTTPException(
@@ -194,10 +196,10 @@ def admin_get_dataset(
         current_user (dict): The currently authenticated user.
 
     Returns:
-        The dataset if found.
+        DatasetResponse: The dataset if found.
 
     Raises:
-        HTTP 403 if user does not have access.
+        HTTPException: HTTP 403 if user does not have access.
     """
     if not current_user.is_admin:
         raise HTTPException(

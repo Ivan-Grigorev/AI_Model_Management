@@ -47,7 +47,8 @@ def list_models(db: Session = Depends(get_db), current_user: User = Depends(get_
     Get all models.
 
     Attributes:
-        current_user: The currently authenticated user.
+        db (Session): SQLAlchemy session to access the database.
+        current_user (User): The currently authenticated user.
 
     Returns:
         List of all models in the database.
@@ -69,13 +70,14 @@ def get_model(
 
     Attributes:
         model_id (int): The ID of the model to retrieve.
-        current_user: The currently authenticated user.
+        db (Session): SQLAlchemy session to access the database.
+        current_user (User): The currently authenticated user.
 
     Returns:
-        The model if found.
+        ModelResponse: The model if found.
 
     Raises:
-        HTTP 404 if not found.
+        HTTPException: HTTP 404 if model not found.
     """
 
     model = (
@@ -111,7 +113,7 @@ def admin_create_model(
         ModelResponse: The created model.
 
     Raises:
-        HTTP 403 if user does not have access.
+        HTTPException: HTTP 403 if user does not have access.
     """
     if not current_user.is_admin:
         raise HTTPException(
@@ -136,7 +138,7 @@ def admin_list_models(
         List of all models in the database.
 
     Raises:
-        HTTP 403 if user does not have access.
+        HTTPException: HTTP 403 if user does not have access.
     """
     if not current_user.is_admin:
         raise HTTPException(
@@ -162,8 +164,8 @@ def admin_delete_model(
         dict: A message indicating successful deletion.
 
     Raises:
-        HTTP 403 if user does not have access.
-        HTTP 404 If the model is not found.
+        HTTPException: HTTP 403 if user does not have access.
+        HTTPException: HTTP 404 If the model is not found.
     """
     if not current_user.is_admin:
         raise HTTPException(
@@ -188,14 +190,14 @@ def admin_get_model(
     Attributes:
         model_id (int): The ID of the model to retrieve.
         db (Session): SQLAlchemy session to access the database.
-        current_user (dict): The currently authenticated user.
+        current_user (User): The currently authenticated user.
 
     Returns:
-        The model if found.
+        ModelResponse: The model if found.
 
     Raises:
-        HTTP 403 if user does not have access.
-        HTTP 404 if model not found.
+        HTTPException: HTTP 403 if user does not have access.
+        HTTPException: HTTP 404 if model not found.
     """
     if not current_user.is_admin:
         raise HTTPException(
