@@ -273,6 +273,14 @@ The application is containerized using Docker and orchestrated with Docker Compo
    - **Frontend:** [http://localhost:8080](http://localhost:8080)
    - **Backend API:** [http://localhost:8000](http://localhost:8000)
 
+## License
+
+This project is licensed under the terms of the [LICENSE](./LICENSE).
+
+## Author
+
+This repository was built and is maintained by [Ivan Grigorev](https://github.com/Ivan-Grigorev).
+
 ---
 
 Thank you for using the AI Model Management Web Application! We hope it enhances your workflow and makes AI model management effortless.
